@@ -20,6 +20,13 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
+  async userLogin(usersDto: UsersDto): Promise<void> {
+    const userCheck = this.userRepository.find({
+      where: {username: usersDto.username}
+    });
+    console.log(userCheck);
+  }
+
   async updateUser(id: number, updateUserDto: UsersDto): Promise<User> {
     const options = { where: { id } };
     const user = await this.userRepository.findOne(options);
