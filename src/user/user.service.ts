@@ -39,7 +39,18 @@ export class UserService {
     }
     return this.userRepository.save(user);
   }
+
   async deleteUser(id: number): Promise<void> {
     await this.userRepository.delete(id);
   }
+
+  async userValidation(usersDto: UsersDto){
+    const userCheck = await this.userRepository.findOneBy({
+      username: usersDto.username,
+      password: usersDto.password
+    })
+    if (!userCheck) return false
+    return true
+  }
+
 }

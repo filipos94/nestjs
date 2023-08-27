@@ -17,7 +17,7 @@ export class UserController {
   }
 
   @Post('userLogin')
-  async userLogin(@Body() usersDto: UsersDto){
+  async userLogin(@Body() usersDto: UsersDto) {
     return this.userService.userLogin(usersDto);
   }
 
@@ -33,5 +33,10 @@ export class UserController {
   @Delete('delete-users')
   async deleteUsers(@Param('id') id: number) {
     return this.userService.deleteUser(id);
+  }
+
+  @Post('userValidation')
+  async userValidation(@Body() usersDto: UsersDto){
+    return this.userService.userValidation(usersDto)
   }
 }
