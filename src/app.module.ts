@@ -3,12 +3,12 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { ChatroomController } from './chatroom/chatroom.controller';
 import { ChatroomModule } from './chatroom/chatroom.module';
 
 @Module({
   imports: [
     UserModule,
+    ChatroomModule,
     TypeOrmModule.forRoot({
       type: 'mysql',
       host: 'localhost',
@@ -16,12 +16,12 @@ import { ChatroomModule } from './chatroom/chatroom.module';
       username: 'root',
       password: '',
       database: 'test',
-      entities: [__dirname + '/user/usersUtils/*.entity{.ts,.js}'],
+      entities: [__dirname + '/user/usersUtils/*.entity{.ts,.js}',
+        __dirname + '/chatroom/chatroomUtils/*.entity{.ts,.js}'],
       synchronize: true, // Set to false in production
     }),
-    ChatroomModule,
   ],
-  controllers: [AppController, ChatroomController],
-  providers: [AppService, UserModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

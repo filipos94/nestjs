@@ -1,8 +1,10 @@
-import { Entity } from 'typeorm';
+import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
 
 @Entity()
-export class chatroomEntity {
-  username: string;
+export class Chatroom {
+  @PrimaryGeneratedColumn()
+  id: number;
 
+  @Column()
   message: string;
 }

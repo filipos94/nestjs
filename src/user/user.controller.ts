@@ -36,7 +36,7 @@ export class UserController {
   }
 
   @Post('userValidation')
-  async userValidation(@Body() usersDto: UsersDto){
-    return this.userService.userValidation(usersDto)
+  async userValidation(@Body() usersDto: UsersDto) {
+    return this.userService.userValidation(usersDto);
   }
 }
