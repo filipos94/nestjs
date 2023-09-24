@@ -1,6 +1,7 @@
-import {Controller,Get,Post,Delete,Put,Body,Param} from '@nestjs/common';
+import {Controller, Get, Post, Delete, Put, Body, Param, Res} from '@nestjs/common';
 import { UsersDto } from './usersUtils/usersDto';
 import { UserService } from './user.service';
+import { Response } from 'express'
 
 @Controller('user')
 export class UserController {
@@ -36,7 +37,10 @@ export class UserController {
   }
 
   @Post('userValidation')
-  async userValidation(@Body() usersDto: UsersDto) {
-    return this.userService.userValidation(usersDto);
+  async userValidation(@Body() usersDto: UsersDto, @Res({passthrough: true}) response: Response) {
+    response.cookie('jwt', await this.userService.userValidation(usersDto), {httpOnly: true})
+    return {
+      message: 'Success'
+    }
   }
 }

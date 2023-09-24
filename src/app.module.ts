@@ -4,6 +4,7 @@ import { AppService } from './app.service';
 import { UserModule } from './user/user.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ChatroomModule } from './chatroom/chatroom.module';
+import { JwtModule } from "@nestjs/jwt";
 
 @Module({
   imports: [

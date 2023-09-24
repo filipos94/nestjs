@@ -1,12 +1,14 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {Injectable, NotFoundException, Res} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './usersUtils/users.entity';
 import { Repository } from 'typeorm';
 import { UsersDto } from './usersUtils/usersDto';
+import { JwtService } from "@nestjs/jwt";
+import {Response} from "express";
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(User) private readonly userRepository: Repository<User>,) {}
+  constructor(@InjectRepository(User) private readonly userRepository: Repository<User>, private jwtService: JwtService) {}
 
   async allUsers(): Promise<User[]> {
     return this.userRepository.find();
@@ -17,11 +19,10 @@ export class UserService {
     return this.userRepository.save(user);
   }
 
-  async userLogin(usersDto: UsersDto): Promise<void> {
+  async userLogin(usersDto: UsersDto) {
     const userCheck = this.userRepository.find({
       where: {username: usersDto.username}
     });
-    console.log(userCheck);
   }
 
   async updateUser(id: number, updateUserDto: UsersDto): Promise<User> {
@@ -46,8 +47,12 @@ export class UserService {
       username: usersDto.username,
       password: usersDto.password
     })
+    const payload = {
+      username: usersDto.username
+    }
+    const jwt = this.jwtService.signAsync(payload)
     if (!userCheck) return false
-    return true
+    return jwt
   }
 
 }

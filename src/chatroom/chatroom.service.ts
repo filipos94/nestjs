@@ -15,7 +15,7 @@ export class ChatroomService {
 
     async allMessages(){
         const allMessages = this.chatroomRepository.find();
-        console.log(allMessages)
+        console.log(allMessages);
         return allMessages;
     }
 }

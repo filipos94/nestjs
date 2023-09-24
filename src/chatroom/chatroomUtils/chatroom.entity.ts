@@ -1,4 +1,14 @@
-import {Column, Entity, PrimaryGeneratedColumn} from 'typeorm';
+import {
+  BeforeInsert,
+  BeforeUpdate,
+  Column,
+  CreateDateColumn,
+  Entity,
+  OneToOne,
+  PrimaryGeneratedColumn,
+  UpdateDateColumn
+} from 'typeorm';
+import {User} from "../../user/usersUtils/users.entity";
 
 @Entity()
 export class Chatroom {
@@ -7,4 +17,17 @@ export class Chatroom {
 
   @Column()
   message: string;
+
+  @Column()
+  date: string
+
+  @BeforeUpdate()
+  @BeforeInsert()
+  updateCurrentDate(){
+    this.date = new Date().toUTCString();
+  }
+
+  @OneToOne(() => User, (user) => user.message)
+  user: User;
+
 }
