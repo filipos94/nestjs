@@ -1,7 +1,7 @@
-import {Controller, Get, Post, Delete, Put, Body, Param, Res} from '@nestjs/common';
+import {Controller, Get, Post, Delete, Put, Body, Param, Res, Req} from '@nestjs/common';
 import { UsersDto } from './usersUtils/usersDto';
 import { UserService } from './user.service';
-import { Response } from 'express'
+import { Response, Request } from 'express'
 
 @Controller('user')
 export class UserController {
@@ -13,13 +13,15 @@ export class UserController {
   }
 
   @Post('new-users')
-  async newUsers(@Body() usersDto: UsersDto) {
-    return this.userService.newUser(usersDto);
+  async newUsers(@Body() usersDto: UsersDto, @Res({passthrough: true}) response: Response) {
+    await response.cookie('jwt', this.userService.newUser(usersDto))
+    return usersDto
   }
 
   @Post('userLogin')
-  async userLogin(@Body() usersDto: UsersDto) {
-    return this.userService.userLogin(usersDto);
+  async userLogin(@Body() usersDto: UsersDto, @Res({passthrough: true}) response: Response) {
+    response.cookie('jwt', await this.userService.userLogin(usersDto))
+    return usersDto
   }
 
   @Put('update-users')
@@ -36,11 +38,14 @@ export class UserController {
     return this.userService.deleteUser(id);
   }
 
-  @Post('userValidation')
-  async userValidation(@Body() usersDto: UsersDto, @Res({passthrough: true}) response: Response) {
-    response.cookie('jwt', await this.userService.userValidation(usersDto), {httpOnly: true})
-    return {
-      message: 'Success'
-    }
+  @Get('userValidation')
+  async userValidation(@Req() req: Request) {
+    const cookie = req.cookies['jwt']
+    return this.userService.userValidation(cookie)
+  }
+
+  @Get('logout')
+  logOut(@Res() res){
+
   }
 }

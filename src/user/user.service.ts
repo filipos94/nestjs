@@ -1,10 +1,9 @@
-import {Injectable, NotFoundException, Res} from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { User } from './usersUtils/users.entity';
-import { Repository } from 'typeorm';
-import { UsersDto } from './usersUtils/usersDto';
-import { JwtService } from "@nestjs/jwt";
-import {Response} from "express";
+import {Injectable, NotFoundException} from '@nestjs/common';
+import {InjectRepository} from '@nestjs/typeorm';
+import {User} from './usersUtils/users.entity';
+import {Repository} from 'typeorm';
+import {UsersDto} from './usersUtils/usersDto';
+import {JwtService} from "@nestjs/jwt";
 
 @Injectable()
 export class UserService {
@@ -14,15 +13,26 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async newUser(usersDto: UsersDto): Promise<User> {
+  async newUser(usersDto: UsersDto){
     const user = this.userRepository.create(usersDto);
-    return this.userRepository.save(user);
+    const payload = {
+      username: usersDto.username
+    }
+    await this.userRepository.save(user);
+    const jwt = this.jwtService.signAsync(payload)
+    return jwt;
   }
 
   async userLogin(usersDto: UsersDto) {
-    const userCheck = this.userRepository.find({
-      where: {username: usersDto.username}
-    });
+    const userCheck = await this.userRepository.findOneBy({
+      username: usersDto.username,
+      password: usersDto.password
+    })
+    const payload = {
+      username: usersDto.username
+    }
+    if (!userCheck) return false
+    return this.jwtService.signAsync(payload.username)
   }
 
   async updateUser(id: number, updateUserDto: UsersDto): Promise<User> {
@@ -42,17 +52,18 @@ export class UserService {
     await this.userRepository.delete(id);
   }
 
-  async userValidation(usersDto: UsersDto){
-    const userCheck = await this.userRepository.findOneBy({
-      username: usersDto.username,
-      password: usersDto.password
+  async userValidation(req){
+    const cookie = await this.jwtService.verifyAsync(req)
+    const user = await this.userRepository.findOneBy({
+      username: cookie
     })
-    const payload = {
-      username: usersDto.username
+    if (!user) {
+      console.error("No user")
+    } else {
+      delete user.password;
+      delete user.email;
+      return user;
     }
-    const jwt = this.jwtService.signAsync(payload)
-    if (!userCheck) return false
-    return jwt
   }
 
 }
