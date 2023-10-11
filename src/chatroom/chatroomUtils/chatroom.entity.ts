@@ -2,16 +2,16 @@ import {
   BeforeInsert,
   BeforeUpdate,
   Column,
-  CreateDateColumn,
-  Entity,
+  Entity, JoinColumn,
   OneToOne,
   PrimaryGeneratedColumn,
-  UpdateDateColumn
 } from 'typeorm';
-import {User} from "../../user/usersUtils/users.entity";
+import {ChatroomService} from "../chatroom.service";
 
 @Entity()
 export class Chatroom {
+  constructor(private chatroomService: ChatroomService) {
+  }
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -19,15 +19,14 @@ export class Chatroom {
   message: string;
 
   @Column()
-  date: string
+  date: string;
+
+  @Column()
+  userID: string;
 
   @BeforeUpdate()
   @BeforeInsert()
   updateCurrentDate(){
     this.date = new Date().toUTCString();
   }
-
-  @OneToOne(() => User, (user) => user.message)
-  user: User;
-
 }

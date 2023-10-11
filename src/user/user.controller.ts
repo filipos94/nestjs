@@ -15,13 +15,13 @@ export class UserController {
   @Post('new-users')
   async newUsers(@Body() usersDto: UsersDto, @Res({passthrough: true}) response: Response) {
     await response.cookie('jwt', this.userService.newUser(usersDto))
-    return usersDto
+    return usersDto;
   }
 
   @Post('userLogin')
   async userLogin(@Body() usersDto: UsersDto, @Res({passthrough: true}) response: Response) {
     response.cookie('jwt', await this.userService.userLogin(usersDto))
-    return usersDto
+    return usersDto;
   }
 
   @Put('update-users')
@@ -40,12 +40,13 @@ export class UserController {
 
   @Get('userValidation')
   async userValidation(@Req() req: Request) {
-    const cookie = req.cookies['jwt']
-    return this.userService.userValidation(cookie)
+    const cookie = req.cookies['jwt'];
+    return this.userService.userValidation(cookie);
   }
 
   @Get('logout')
-  logOut(@Res() res){
-
+  logOut(@Req() req: Request, @Res() res: Response){
+    const cookie = req.cookies['jwt'];
+    return res.clearCookie(cookie)
   }
 }

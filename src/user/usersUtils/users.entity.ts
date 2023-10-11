@@ -14,8 +14,4 @@ export class User {
 
   @Column()
   email: string;
-
-  @OneToOne(() => Chatroom, {cascade: true})
-  @JoinColumn()
-  message:Chatroom;
 }

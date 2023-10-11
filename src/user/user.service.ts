@@ -32,7 +32,7 @@ export class UserService {
       username: usersDto.username
     }
     if (!userCheck) return false
-    return this.jwtService.signAsync(payload.username)
+    return this.jwtService.signAsync(payload)
   }
 
   async updateUser(id: number, updateUserDto: UsersDto): Promise<User> {
@@ -54,8 +54,11 @@ export class UserService {
 
   async userValidation(req){
     const cookie = await this.jwtService.verifyAsync(req)
+    if (!cookie) {
+
+    }
     const user = await this.userRepository.findOneBy({
-      username: cookie
+      username: cookie.username
     })
     if (!user) {
       console.error("No user")
